@@ -1,7 +1,4 @@
-.PHONY: up install-cicd persistent-volumes tkn-cli watch-pods
-
-up:
-	cluster
+.PHONY: cluster install-cicd persistent-volumes tkn-cli watch-pods
 
 cluster-down:
 	k3d cluster delete vault-labs
@@ -50,4 +47,3 @@ apply:
 	kubectl apply -f pipelines/pipeline.yml
 	kubectl apply -f pipelines/pipeline-run.yml
 	kubectl apply -f pipelines/secrets.yml
-
