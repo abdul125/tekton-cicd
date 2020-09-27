@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: tutorial-pipeline
+  namespace: tekton-pipelines
+spec:
+  tasks:
+    - name: build-hello-task
+      taskRef:
+        name: hello
