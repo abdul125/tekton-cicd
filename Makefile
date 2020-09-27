@@ -1,7 +1,10 @@
-.PHONY: cluster install-cicd persistent-volumes tkn-cli watch-pods
+.PHONY:	cluster install-cicd persistent-volumes tkn-cli watch-pods
+
+all:
+	cluster install-cicd persistent-volumes tkn-cli watch-pods
 
 cluster-down:
-	k3d cluster delete vault-labs
+	k3d cluster delete tekton-cicd
 
 cluster:
 	k3d cluster create tekton-cicd \
@@ -20,8 +23,7 @@ persistent-volumes:
                          --from-literal=storageClassName=manual \
                          -o yaml -n tekton-pipelines \
                          --dry-run=client | kubectl replace -f - && \
-      
-	 kubectl create configmap config-defaults \
+        kubectl create configmap config-defaults \
                          --from-literal=default-service-account=tutorial-service \
                          -o yaml -n tekton-pipelines \
                          --dry-run=client  | kubectl replace -f -
@@ -47,3 +49,6 @@ apply:
 	kubectl apply -f pipelines/pipeline.yml
 	kubectl apply -f pipelines/pipeline-run.yml
 	kubectl apply -f pipelines/secrets.yml
+
+start-task:
+	 tkn task start hello -n tekton-pipelines

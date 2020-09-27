@@ -1,6 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
+  namespace: tekton-pipelines
   generateName: hello-run-
 spec:
   taskRef:
