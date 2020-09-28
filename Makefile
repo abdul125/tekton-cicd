@@ -1,4 +1,5 @@
-.PHONY:	cluster install-cicd persistent-volumes tkn-cli watch-pods
+.PHONY:
+	cluster install-cicd persistent-volumes tkn-cli watch-pods
 
 all:
 	cluster install-cicd persistent-volumes tkn-cli watch-pods
@@ -17,6 +18,11 @@ cluster:
 		--k3s-server-arg '--no-deploy=traefik' \
 	    --agents 3
 
+
+install-cicd:
+	kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+
+
 persistent-volumes:
 	kubectl create configmap config-artifact-pvc \
                          --from-literal=size=10Gi \
@@ -30,10 +36,6 @@ persistent-volumes:
 
 watch-pods:
 	kubectl get pods --namespace tekton-pipelines --watch
-
-
-install-cicd:
-	kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
 tkn-cli:
 	sudo apt update
