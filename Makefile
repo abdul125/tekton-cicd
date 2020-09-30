@@ -1,13 +1,4 @@
-.PHONY:
-	cluster install-cicd persistent-volumes tkn-cli watch-pods
-
-all:
-	cluster install-cicd persistent-volumes tkn-cli watch-pods
-
-cluster-down:
-	k3d cluster delete tekton-cicd
-
-cluster:
+cluster-up:
 	k3d cluster create tekton-cicd \
 	    -p 80:80@loadbalancer \
 	    -p 443:443@loadbalancer \
@@ -16,12 +7,30 @@ cluster:
 	    -v /var/log/journal:/var/log/journal:ro \
 	    -v /var/run/docker.sock:/var/run/docker.sock \
 		--k3s-server-arg '--no-deploy=traefik' \
-	    --agents 3
+	    --agents 2
+	    
+	    
+cluster-down:
+	k3d cluster delete tekton-cicd
 
 
-install-cicd:
+install-tekton:
 	kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
+
+tekton-dashboard:
+        kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+	
+
+watch-pods:
+	kubectl get pods --namespace tekton-pipelines --watch
+
+tkn-cli:
+	sudo apt update
+	sudo apt install -y gnupg
+	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3EFE0E0A2F2F60AA
+	echo "deb http://ppa.launchpad.net/tektoncd/cli/ubuntu eoan main"|sudo tee /etc/apt/sources.list.d/tektoncd-ubuntu-cli.list
+	sudo apt update && sudo apt install -y tektoncd-cli
 
 persistent-volumes:
 	kubectl create configmap config-artifact-pvc \
@@ -33,16 +42,6 @@ persistent-volumes:
                          --from-literal=default-service-account=tutorial-service \
                          -o yaml -n tekton-pipelines \
                          --dry-run=client  | kubectl replace -f -
-
-watch-pods:
-	kubectl get pods --namespace tekton-pipelines --watch
-
-tkn-cli:
-	sudo apt update
-	sudo apt install -y gnupg
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3EFE0E0A2F2F60AA
-	echo "deb http://ppa.launchpad.net/tektoncd/cli/ubuntu eoan main"|sudo tee /etc/apt/sources.list.d/tektoncd-ubuntu-cli.list
-	sudo apt update && sudo apt install -y tektoncd-cli
 
 apply:
 	kubectl apply -f pipelines/sa-role-binding.yml
