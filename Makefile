@@ -19,7 +19,7 @@ install-tekton:
 
 
 tekton-dashboard:
-        kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+        kubectl apply -f https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
 	
 
 watch-pods:
