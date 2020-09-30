@@ -17,6 +17,11 @@ cluster-down:
 install-tekton:
 	kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
+tekton-dashboard:
+	kubectl apply -f https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml
+	kubectl patch svc tekton-dashboard -n tekton-pipelines --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+
+
 
 watch-pods:
 	kubectl get pods --namespace tekton-pipelines --watch
@@ -27,6 +32,7 @@ tkn-cli:
 	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3EFE0E0A2F2F60AA
 	echo "deb http://ppa.launchpad.net/tektoncd/cli/ubuntu eoan main"|sudo tee /etc/apt/sources.list.d/tektoncd-ubuntu-cli.list
 	sudo apt update && sudo apt install -y tektoncd-cli
+	'alias t="tkn"' >> ~/.bashrc
 
 persistent-volumes:
 	kubectl create configmap config-artifact-pvc \
